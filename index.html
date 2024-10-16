@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Click Game</title>
+    <title>Heart Click Game & Date Request</title>
     <style>
         body {
             display: flex;
@@ -22,6 +22,13 @@
             font-size: 36px;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #ffeb3b;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         p {
@@ -100,6 +107,71 @@
             background-color: #ff4081;
         }
 
+        /* Date Request Styles */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            color: white;
+            background-color: #ff4081;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #ff6589;
+        }
+
+        button:active {
+            transform: scale(1.1);
+        }
+
+        /* Notification Slide-in */
+        .popup {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 24px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.5s ease forwards;
+        }
+
+        @keyframes slideDown {
+            0% { top: -100px; opacity: 0; }
+            100% { top: 50%; opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .yayyy-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .yayyy-btn:hover {
+            background-color: #ff4081;
+        }
+
         /* Floating Hearts Animation */
         .heart-animation {
             position: absolute;
@@ -125,7 +197,7 @@
     </style>
 </head>
 <body>
-    <div>
+    <div id="gameContainer">
         <h1>Can you keep up?</h1>
         <p>Click the heart as fast as you can!</p>
         <div id="heart">❤️</div>
@@ -136,7 +208,23 @@
         <div class="modal-content">
             <h2>Well done!</h2>
             <p>You're on your way to something special!</p>
-            <button class="yay-btn" onclick="closePopup()">YAY</button>
+            <button class="yay-btn" onclick="showDatePage()">YAY</button>
+        </div>
+    </div>
+
+    <!-- Date Request -->
+    <div id="dateRequest" style="display: none;">
+        <h1>Is Suhani Ready to Say Yes to a Date with Om?</h1>
+        <h2>Press Yes to Plan, No to Think Again!</h2>
+        <div class="button-container">
+            <button id="yes">YES</button>
+            <button id="no">NO</button>
+        </div>
+
+        <!-- Batman Pop-Up -->
+        <div id="batmanPopup" class="popup">
+            <p>Your Batman will pick you up at 9, be ready!</p>
+            <button class="yayyy-btn" onclick="closeBatmanPopup()">YAYYY</button>
         </div>
     </div>
 
@@ -168,23 +256,62 @@
         function showPopup() {
             const modal = document.getElementById("myModal");
             modal.style.display = "block";
+            document.getElementById("gameContainer").style.display = "none";
         }
 
-        function closePopup() {
+        function showDatePage() {
             const modal = document.getElementById("myModal");
             modal.style.display = "none";
-            window.location.href = "/date_page";
+            document.getElementById("dateRequest").style.display = "block";
         }
 
-        // Heart Animation
-        setInterval(() => {
-            const heartDiv = document.createElement('div');
-            heartDiv.classList.add('heart-animation');
-            document.body.appendChild(heartDiv);
-            setTimeout(() => {
-                heartDiv.remove();
-            }, 5000);
-        }, 500);
+        // Date Request Functionality
+        const noButton = document.getElementById('no');
+        const yesButton = document.getElementById('yes');
+        const popup = document.getElementById("batmanPopup");
+        let clickYesCount = 0;
+        const yesButtonText = ["YES", "YESS", "YESSS", "YESSSS", "YESSSSS", "YESSSSSS"];
+
+        noButton.addEventListener('click', moveNoButton);
+
+        function moveNoButton() {
+            const maxX = window.innerWidth - noButton.offsetWidth;
+            const maxY = window.innerHeight - noButton.offsetHeight;
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
+            // Ensure the NO button stays within bounds
+            noButton.style.left = `${x}px`;
+            noButton.style.top = `${y}px`;
+            noButton.style.position = "absolute";
+        }
+
+        yesButton.addEventListener('click', () => {
+            clickYesCount++;
+            if (clickYesCount < yesButtonText.length) {
+                yesButton.textContent = yesButtonText[clickYesCount];
+            } else {
+                popup.style.display = "block";
+            }
+        });
+
+        function closeBatmanPopup() {
+            popup.style.display = "none";
+            document.getElementById("dateRequest").style.display = "none";
+            resetGame();
+        }
+
+        function resetGame() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            document.getElementById("gameContainer").style.display = "block";
+            clickCount = 0;
+            clickYesCount = 0;
+            yesButton.textContent = "YES";
+            noButton.style.position = "static";
+            noButton.style.left = "initial";
+            noButton.style.top = "initial";
+        }
     </script>
 </body>
 </html>
