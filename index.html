@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Click Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            color: #fff;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 24px;
+            margin-bottom: 50px;
+        }
+
+        #heart {
+            font-size: 100px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            animation: beat 1s infinite;
+            color: red;
+        }
+
+        #heart:hover {
+            transform: scale(1.3);
+        }
+
+        @keyframes beat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Well Done Pop-Up */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 20% auto;
+            padding: 15px;
+            border: 1px solid #888;
+            width: 60%;
+            max-width: 300px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #ff69b4;
+            font-size: 26px;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .yay-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .yay-btn:hover {
+            background-color: #ff4081;
+        }
+
+        /* Floating Hearts Animation */
+        .heart-animation {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            background-color: #ff69b4;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation: floatUp 5s infinite ease-in-out;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-150vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Can you keep up?</h1>
+        <p>Click the heart as fast as you can!</p>
+        <div id="heart">❤️</div>
+    </div>
+
+    <!-- Well Done Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <h2>Well done!</h2>
+            <p>You're on your way to something special!</p>
+            <button class="yay-btn" onclick="closePopup()">YAY</button>
+        </div>
+    </div>
+
+    <script>
+        const heart = document.getElementById('heart');
+        let clickCount = 0;
+        let clickTimer;
+
+        heart.onclick = function() {
+            clickCount++;
+
+            heart.style.animation = 'beat 0.3s infinite';
+
+            setTimeout(() => {
+                heart.style.animation = 'beat 1s infinite';
+            }, 500);
+
+            if (!clickTimer) {
+                clickTimer = setTimeout(() => {
+                    if (clickCount >= 5) {
+                        showPopup();
+                    }
+                    clickCount = 0;
+                    clickTimer = null;
+                }, 2000);
+            }
+        };
+
+        function showPopup() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        }
+
+        function closePopup() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            window.location.href = "/date_page";
+        }
+
+        // Heart Animation
+        setInterval(() => {
+            const heartDiv = document.createElement('div');
+            heartDiv.classList.add('heart-animation');
+            document.body.appendChild(heartDiv);
+            setTimeout(() => {
+                heartDiv.remove();
+            }, 5000);
+        }, 500);
+    </script>
+</body>
+</html>
